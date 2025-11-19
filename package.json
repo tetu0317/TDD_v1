@@ -1,0 +1,32 @@
+{
+  "name": "document-manager",
+  "version": "1.0.0",
+  "description": "ドキュメント管理ツール - TDD実装プロジェクト",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "jest",
+    "test:coverage": "jest --coverage",
+    "test:watch": "jest --watch",
+    "test:unit": "jest test/単体テスト",
+    "test:integration": "jest test/統合テスト",
+    "test:e2e": "jest test/E2Eテスト"
+  },
+  "keywords": [
+    "electron",
+    "document",
+    "search",
+    "tdd"
+  ],
+  "author": "TDD Project",
+  "license": "MIT",
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.1.5",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0"
+  },
+  "dependencies": {},
+  "optionalDependencies": {
+    "electron": "^27.0.0"
+  }
+}
