@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ドキュメント管理ツール v1.0</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f5f5f5;
+      padding: 20px;
+    }
+
+    #app {
+      max-width: 1200px;
+      margin: 0 auto;
+      background-color: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      color: #333;
+      margin-bottom: 30px;
+      font-size: 28px;
+    }
+
+    #search-form {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 30px;
+    }
+
+    #search-input {
+      flex: 1;
+      padding: 12px 16px;
+      font-size: 16px;
+      border: 2px solid #ddd;
+      border-radius: 4px;
+      transition: border-color 0.3s;
+    }
+
+    #search-input:focus {
+      outline: none;
+      border-color: #4CAF50;
+    }
+
+    #search-button {
+      padding: 12px 24px;
+      font-size: 16px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    #search-button:hover {
+      background-color: #45a049;
+    }
+
+    #search-button:active {
+      background-color: #3d8b40;
+    }
+
+    .container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+    }
+
+    .section {
+      background-color: #fafafa;
+      padding: 20px;
+      border-radius: 4px;
+      border: 1px solid #e0e0e0;
+    }
+
+    .section h2 {
+      color: #555;
+      font-size: 18px;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #4CAF50;
+    }
+
+    #results-list {
+      min-height: 200px;
+      max-height: 500px;
+      overflow-y: auto;
+    }
+
+    .result-item {
+      padding: 12px;
+      margin-bottom: 10px;
+      background-color: white;
+      border: 1px solid #e0e0e0;
+      border-radius: 4px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .result-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .document-title {
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 5px;
+      font-size: 16px;
+    }
+
+    .document-link {
+      color: #4CAF50;
+      text-decoration: none;
+      font-size: 14px;
+      display: block;
+      margin-top: 5px;
+    }
+
+    .document-link:hover {
+      text-decoration: underline;
+    }
+
+    #document-display {
+      min-height: 200px;
+      max-height: 500px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      background-color: white;
+      padding: 15px;
+      border-radius: 4px;
+      border: 1px solid #e0e0e0;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 14px;
+      line-height: 1.6;
+      color: #333;
+    }
+
+    .empty-message {
+      color: #999;
+      text-align: center;
+      padding: 40px;
+      font-style: italic;
+    }
+
+    /* スクロールバーのスタイル */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #888;
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #555;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <h1>📄 ドキュメント管理ツール</h1>
+
+    <div id="search-form">
+      <input
+        id="search-input"
+        type="text"
+        placeholder="検索キーワードを入力してください..."
+        autocomplete="off"
+      />
+      <button id="search-button">検索</button>
+    </div>
+
+    <div class="container">
+      <div class="section">
+        <h2>検索結果</h2>
+        <div id="results-list">
+          <div class="empty-message">検索結果がここに表示されます</div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>ドキュメント表示</h2>
+        <div id="document-display">
+          <div class="empty-message">ドキュメントの内容がここに表示されます</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Electron環境でNode.jsモジュールを使用
+    const DocumentSearcher = require('./DocumentSearcher');
+    const FileReader = require('./FileReader');
+    const UIController = require('./UIController');
+    const path = require('path');
+    const os = require('os');
+    const fs = require('fs');
+
+    // インスタンスを作成
+    const searcher = new DocumentSearcher();
+    const fileReader = new FileReader();
+    const uiController = new UIController(searcher, fileReader);
+
+    // サンプルデータを登録
+    function loadSampleDocuments() {
+      // ホームディレクトリにサンプルフォルダを作成
+      const sampleDir = path.join(os.homedir(), 'document-manager-samples');
+
+      if (!fs.existsSync(sampleDir)) {
+        fs.mkdirSync(sampleDir, { recursive: true });
+      }
+
+      const sampleDocuments = [
+        {
+          filename: '設計書.txt',
+          content: 'システム設計に関する文書です。\n\nアーキテクチャ概要:\n- フロントエンド: Electron\n- バックエンド: Node.js\n- データベース: なし（ファイルベース）'
+        },
+        {
+          filename: '仕様書.txt',
+          content: '機能仕様とシステム要件を記載。\n\n主な機能:\n1. ドキュメント検索\n2. ドキュメント表示\n3. キーワード検索\n\nシステム要件:\n- Node.js v16以上\n- Electron v27以上'
+        },
+        {
+          filename: '議事録.txt',
+          content: '会議の内容と決定事項。\n\n日時: 2025-11-19\n参加者: 開発チーム全員\n\n議題:\n1. プロジェクトの進捗確認\n2. テスト仕様書のレビュー\n3. 次のマイルストーンの設定'
+        }
+      ];
+
+      sampleDocuments.forEach(doc => {
+        const filePath = path.join(sampleDir, doc.filename);
+        if (!fs.existsSync(filePath)) {
+          fs.writeFileSync(filePath, doc.content, 'utf8');
+        }
+        searcher.addDocument(doc.filename, filePath, doc.content);
+      });
+    }
+
+    // アプリケーション初期化
+    loadSampleDocuments();
+
+    // イベントリスナーを設定
+    document.getElementById('search-button').addEventListener('click', () => {
+      uiController.handleSearch();
+    });
+
+    document.getElementById('search-input').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        uiController.handleSearch();
+      }
+    });
+
+    // 初期状態で全ドキュメントを表示
+    uiController.handleSearch();
+  </script>
+</body>
+</html>
