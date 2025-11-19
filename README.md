@@ -17,23 +17,47 @@ TDD（テスト駆動開発）で実装したElectronベースのドキュメン
 
 ```
 TDD_v1/
-├── src/                    # ソースコード
-│   ├── DocumentSearcher.js # ドキュメント検索クラス
-│   ├── FileReader.js       # ファイル読み込みクラス
-│   ├── UIController.js     # UI制御クラス
-│   ├── index.html          # メインUI
-│   └── main.js             # Electronエントリポイント
-├── test/                   # テストコード
+├── src/                           # ソースコード
+│   ├── DocumentSearcher.js        # ドキュメント検索クラス
+│   ├── FileReader.js              # ファイル読み込みクラス
+│   ├── UIController.js            # UI制御クラス
+│   ├── index.html                 # メインUI
+│   └── main.js                    # Electronエントリポイント
+├── test/                          # テストコード（テストケース単位）
 │   ├── 単体テスト/
-│   │   ├── DocumentSearcher.test.js
-│   │   └── FileReader.test.js
+│   │   ├── DocumentSearcher/
+│   │   │   ├── TC_001.test.js    # コンストラクタテスト
+│   │   │   ├── TC_002.test.js    # ドキュメント追加テスト
+│   │   │   ├── TC_003.test.js    # 単一キーワード検索テスト
+│   │   │   ├── TC_004.test.js    # 複数結果検索テスト
+│   │   │   ├── TC_005.test.js    # 検索結果なしテスト
+│   │   │   └── TC_006.test.js    # 空文字検索テスト
+│   │   └── FileReader/
+│   │       ├── TC_007.test.js    # ファイル読み込み成功テスト
+│   │       └── TC_008.test.js    # ファイル読み込み失敗テスト
 │   ├── 統合テスト/
-│   │   └── UIController.test.js
+│   │   └── UIController/
+│   │       ├── TC_009.test.js    # 検索結果表示テスト
+│   │       ├── TC_010.test.js    # ドキュメント表示テスト
+│   │       └── TC_011.test.js    # 検索実行テスト
 │   └── E2Eテスト/
-│       └── app.test.js
-├── docs/                   # ドキュメント
-│   └── test-specs.md       # テスト仕様書
-├── CLAUDE.md               # TDD実施要領
+│       └── TC_012.test.js        # 検索から表示までの一連操作
+├── docs/                          # ドキュメント
+│   ├── test-specs.md              # テスト仕様書（統合版）
+│   └── test-cases/                # テストケース（個別）
+│       ├── TC_001.md              # コンストラクタテスト
+│       ├── TC_002.md              # ドキュメント追加テスト
+│       ├── TC_003.md              # 単一キーワード検索テスト
+│       ├── TC_004.md              # 複数結果検索テスト
+│       ├── TC_005.md              # 検索結果なしテスト
+│       ├── TC_006.md              # 空文字検索テスト
+│       ├── TC_007.md              # ファイル読み込み成功テスト
+│       ├── TC_008.md              # ファイル読み込み失敗テスト
+│       ├── TC_009.md              # 検索結果表示テスト
+│       ├── TC_010.md              # ドキュメント表示テスト
+│       ├── TC_011.md              # 検索実行テスト
+│       └── TC_012.md              # E2Eテスト
+├── CLAUDE.md                      # TDD実施要領
 ├── package.json
 └── jest.config.js
 ```
@@ -86,12 +110,30 @@ npm start
 
 ### テストケース
 
-| 分類 | テストケース数 | 結果 |
-|------|---------------|------|
-| 単体テスト | 15件 | ✅ 全て成功 |
-| 統合テスト | 9件 | ✅ 全て成功 |
-| E2Eテスト | 4件 | ✅ 全て成功 |
-| **合計** | **28件** | **✅ 全て成功** |
+| 分類 | テストスイート | テストケース数 | 結果 |
+|------|---------------|---------------|------|
+| 単体テスト（DocumentSearcher） | 6スイート | 9件 | ✅ 全て成功 |
+| 単体テスト（FileReader） | 2スイート | 5件 | ✅ 全て成功 |
+| 統合テスト（UIController） | 3スイート | 9件 | ✅ 全て成功 |
+| E2Eテスト | 1スイート | 4件 | ✅ 全て成功 |
+| **合計** | **12スイート** | **28件** | **✅ 全て成功** |
+
+### テストケース詳細
+
+| テストID | テスト名 | 分類 | ファイル |
+|----------|---------|------|----------|
+| TC_001 | コンストラクタテスト | 単体テスト | [test/単体テスト/DocumentSearcher/TC_001.test.js](test/単体テスト/DocumentSearcher/TC_001.test.js) |
+| TC_002 | ドキュメント追加テスト | 単体テスト | [test/単体テスト/DocumentSearcher/TC_002.test.js](test/単体テスト/DocumentSearcher/TC_002.test.js) |
+| TC_003 | 単一キーワード検索テスト | 単体テスト | [test/単体テスト/DocumentSearcher/TC_003.test.js](test/単体テスト/DocumentSearcher/TC_003.test.js) |
+| TC_004 | 複数結果検索テスト | 単体テスト | [test/単体テスト/DocumentSearcher/TC_004.test.js](test/単体テスト/DocumentSearcher/TC_004.test.js) |
+| TC_005 | 検索結果なしテスト | 単体テスト | [test/単体テスト/DocumentSearcher/TC_005.test.js](test/単体テスト/DocumentSearcher/TC_005.test.js) |
+| TC_006 | 空文字検索テスト | 単体テスト | [test/単体テスト/DocumentSearcher/TC_006.test.js](test/単体テスト/DocumentSearcher/TC_006.test.js) |
+| TC_007 | ファイル読み込み成功テスト | 単体テスト | [test/単体テスト/FileReader/TC_007.test.js](test/単体テスト/FileReader/TC_007.test.js) |
+| TC_008 | ファイル読み込み失敗テスト | 単体テスト | [test/単体テスト/FileReader/TC_008.test.js](test/単体テスト/FileReader/TC_008.test.js) |
+| TC_009 | 検索結果表示テスト | 統合テスト | [test/統合テスト/UIController/TC_009.test.js](test/統合テスト/UIController/TC_009.test.js) |
+| TC_010 | ドキュメント表示テスト | 統合テスト | [test/統合テスト/UIController/TC_010.test.js](test/統合テスト/UIController/TC_010.test.js) |
+| TC_011 | 検索実行テスト | 統合テスト | [test/統合テスト/UIController/TC_011.test.js](test/統合テスト/UIController/TC_011.test.js) |
+| TC_012 | 検索から表示までの一連操作 | E2Eテスト | [test/E2Eテスト/TC_012.test.js](test/E2Eテスト/TC_012.test.js) |
 
 ### カバレッジ
 
