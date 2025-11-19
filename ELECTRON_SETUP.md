@@ -26,15 +26,19 @@ npm install
 ```
 
 このコマンドで以下がインストールされます：
-- Electron v27.0.0
+- **Electron v27.0.0** （約120MB - 初回は時間がかかります）
 - Jest v29.7.0（テストフレームワーク）
 - jsdom（DOM環境シミュレーション）
+
+**重要**: Electronのダウンロードには数分かかる場合があります。エラーが出た場合は、「トラブルシューティング」セクションを参照してください。
 
 ### 3. アプリケーションの起動
 
 ```bash
 npm start
 ```
+
+**注意**: 初回起動前に必ず`npm install`を実行してください。
 
 ウィンドウサイズ: 1200x800px
 タイトル: ドキュメント管理ツール v1.0
@@ -152,6 +156,40 @@ TDD_v1/
 ```
 
 ## トラブルシューティング
+
+### 'electron' is not recognized as an internal or external command (Windows)
+
+**症状**: `npm start`実行時に以下のエラーが表示される
+```
+'electron' is not recognized as an internal or external command,
+operable program or batch file
+```
+
+**原因**: Electronがインストールされていないか、パスが通っていない
+
+**対処法**:
+```bash
+# 1. node_modulesを削除
+rmdir /s /q node_modules
+
+# 2. package-lock.jsonを削除
+del package-lock.json
+
+# 3. 再インストール
+npm install
+
+# 4. アプリケーションを起動
+npm start
+```
+
+**それでも解決しない場合**:
+```bash
+# npxを使って直接実行（package.jsonで既に設定済み）
+npm start
+
+# または
+npx electron .
+```
 
 ### Electronのインストールに失敗する
 
