@@ -38,10 +38,37 @@ npm install
 npm start
 ```
 
-**注意**: 初回起動前に必ず`npm install`を実行してください。
+**注意**:
+- 初回起動前に必ず`npm install`を実行してください
+- Electronのインストールに失敗した場合は、「テストのみ実行」セクションを参照してください
 
 ウィンドウサイズ: 1200x800px
 タイトル: ドキュメント管理ツール v1.0
+
+## テストのみ実行（Electronなし）
+
+Electronのインストールに失敗した場合でも、**全てのテストは実行可能**です：
+
+```bash
+# Electronをスキップしてインストール
+set ELECTRON_SKIP_BINARY_DOWNLOAD=1
+npm install
+
+# 全テスト実行（28テスト）
+npm test
+
+# カバレッジ付きテスト
+npm run test:coverage
+
+# 単体テストのみ
+npm run test:unit
+```
+
+**確認事項**:
+- ✅ 全12テストスイート、28テストが実行される
+- ✅ DocumentSearcher、FileReader、UIControllerの全機能をテスト
+- ✅ カバレッジレポートが生成される
+- ❌ GUIアプリケーションは起動できない（Electron必須）
 
 ## 初回起動時の自動処理
 
@@ -234,11 +261,30 @@ npm start
 npx electron .
 ```
 
-### Electronのインストールに失敗する
+### Electronのインストールに失敗する（エラーコード: 2551など）
 
 **症状**: `npm install`時にElectronのダウンロードエラー
+```
+npm error code 2551
+npm error path ...electron
+npm error HTTPError: Response code 403 (Forbidden)
+```
 
-**対処法**:
+**原因**: Electronのバイナリダウンロードが制限されている環境
+
+**対処法（方法1: Electronダウンロードをスキップ）**:
+```bash
+# 環境変数を設定してElectronのダウンロードをスキップ
+set ELECTRON_SKIP_BINARY_DOWNLOAD=1
+
+# インストール実行
+npm install
+
+# テストは実行可能
+npm test
+```
+
+**対処法（方法2: npmキャッシュをクリア）**:
 ```bash
 # キャッシュをクリア
 npm cache clean --force
@@ -246,6 +292,17 @@ npm cache clean --force
 # 再インストール
 npm install
 ```
+
+**対処法（方法3: Electronなしでテストのみ実行）**:
+```bash
+# package.jsonでElectronをoptionalDependenciesに設定済み
+# Electronなしでもテストは実行可能
+
+npm install
+npm test
+```
+
+**注意**: Electronのダウンロードに失敗しても、**テスト実行には影響ありません**。GUI版の実行が必要な場合のみ、Electronのインストールが必要です。
 
 ### テストが失敗する
 
