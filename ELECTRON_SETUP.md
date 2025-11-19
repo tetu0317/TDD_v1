@@ -167,8 +167,23 @@ operable program or batch file
 
 **原因**: Electronがインストールされていないか、パスが通っていない
 
-**対処法**:
-```bash
+**対処法（方法1: PowerShellを使用）**:
+```powershell
+# 1. node_modulesを削除
+Remove-Item -Recurse -Force node_modules
+
+# 2. package-lock.jsonを削除
+Remove-Item -Force package-lock.json
+
+# 3. 再インストール
+npm install
+
+# 4. アプリケーションを起動
+npm start
+```
+
+**対処法（方法2: コマンドプロンプトを使用）**:
+```cmd
 # 1. node_modulesを削除
 rmdir /s /q node_modules
 
@@ -179,6 +194,34 @@ del package-lock.json
 npm install
 
 # 4. アプリケーションを起動
+npm start
+```
+
+**対処法（方法3: 手動削除）**:
+```bash
+# 1. エクスプローラーで node_modules フォルダを削除
+#    - プロジェクトフォルダを開く
+#    - node_modules フォルダを右クリック → 削除
+#    - ごみ箱を空にする
+
+# 2. package-lock.json を削除（あれば）
+
+# 3. 再インストール
+npm install
+
+# 4. アプリケーションを起動
+npm start
+```
+
+**対処法（方法4: node_modulesを削除せずに試す）**:
+```bash
+# 1. npmキャッシュをクリア
+npm cache clean --force
+
+# 2. Electronを明示的にインストール
+npm install electron --save-dev
+
+# 3. アプリケーションを起動
 npm start
 ```
 
