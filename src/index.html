@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ドキュメント管理ツール v1.0</title>
+  <title>ドキュメント管理ツール v2.0</title>
   <style>
     * {
       margin: 0;
@@ -18,7 +18,7 @@
     }
 
     #app {
-      max-width: 1200px;
+      max-width: 1400px;
       margin: 0 auto;
       background-color: white;
       padding: 30px;
@@ -28,53 +28,181 @@
 
     h1 {
       color: #333;
-      margin-bottom: 30px;
+      margin-bottom: 20px;
       font-size: 28px;
     }
 
-    #search-form {
+    .tabs {
       display: flex;
-      gap: 10px;
-      margin-bottom: 30px;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #e0e0e0;
     }
 
-    #search-input {
-      flex: 1;
-      padding: 12px 16px;
+    .tab-button {
+      padding: 12px 24px;
       font-size: 16px;
-      border: 2px solid #ddd;
+      background-color: transparent;
+      border: none;
+      cursor: pointer;
+      color: #666;
+      transition: all 0.3s;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+    }
+
+    .tab-button:hover {
+      color: #4CAF50;
+    }
+
+    .tab-button.active {
+      color: #4CAF50;
+      border-bottom-color: #4CAF50;
+      font-weight: bold;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* 検索フォーム */
+    .search-section {
+      background-color: #fafafa;
+      padding: 20px;
+      border-radius: 4px;
+      margin-bottom: 20px;
+    }
+
+    .search-row {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+    }
+
+    .search-field {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .search-field label {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 5px;
+    }
+
+    .search-field input,
+    .search-field select {
+      padding: 10px 12px;
+      font-size: 14px;
+      border: 1px solid #ddd;
       border-radius: 4px;
       transition: border-color 0.3s;
     }
 
-    #search-input:focus {
+    .search-field input:focus,
+    .search-field select:focus {
       outline: none;
       border-color: #4CAF50;
     }
 
-    #search-button {
+    .btn {
       padding: 12px 24px;
-      font-size: 16px;
-      background-color: #4CAF50;
-      color: white;
+      font-size: 14px;
       border: none;
       border-radius: 4px;
       cursor: pointer;
-      transition: background-color 0.3s;
+      transition: all 0.3s;
     }
 
-    #search-button:hover {
+    .btn-primary {
+      background-color: #4CAF50;
+      color: white;
+    }
+
+    .btn-primary:hover {
       background-color: #45a049;
     }
 
-    #search-button:active {
-      background-color: #3d8b40;
+    .btn-secondary {
+      background-color: #2196F3;
+      color: white;
     }
 
-    .container {
+    .btn-secondary:hover {
+      background-color: #1976D2;
+    }
+
+    .btn-clear {
+      background-color: #9e9e9e;
+      color: white;
+    }
+
+    .btn-clear:hover {
+      background-color: #757575;
+    }
+
+    .button-row {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
+    /* 登録フォーム */
+    .register-form {
+      background-color: #fafafa;
+      padding: 20px;
+      border-radius: 4px;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 5px;
+    }
+
+    .form-group label .required {
+      color: #f44336;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 10px 12px;
+      font-size: 14px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      transition: border-color 0.3s;
+    }
+
+    .form-group textarea {
+      height: 80px;
+      resize: vertical;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #4CAF50;
+    }
+
+    /* 結果表示 */
+    .results-container {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 30px;
+      gap: 20px;
     }
 
     .section {
@@ -94,12 +222,12 @@
 
     #results-list {
       min-height: 200px;
-      max-height: 500px;
+      max-height: 400px;
       overflow-y: auto;
     }
 
     .result-item {
-      padding: 12px;
+      padding: 15px;
       margin-bottom: 10px;
       background-color: white;
       border: 1px solid #e0e0e0;
@@ -115,25 +243,50 @@
     .document-title {
       font-weight: bold;
       color: #333;
-      margin-bottom: 5px;
+      margin-bottom: 8px;
       font-size: 16px;
     }
 
-    .document-link {
+    .document-path {
       color: #4CAF50;
-      text-decoration: none;
-      font-size: 14px;
-      display: block;
-      margin-top: 5px;
+      font-size: 13px;
+      word-break: break-all;
+      cursor: pointer;
+      text-decoration: underline;
     }
 
-    .document-link:hover {
-      text-decoration: underline;
+    .document-path:hover {
+      color: #45a049;
+    }
+
+    .document-tags {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+      flex-wrap: wrap;
+    }
+
+    .tag {
+      padding: 3px 8px;
+      font-size: 12px;
+      border-radius: 12px;
+      background-color: #e3f2fd;
+      color: #1976D2;
+    }
+
+    .tag.project {
+      background-color: #e8f5e9;
+      color: #388E3C;
+    }
+
+    .tag.type {
+      background-color: #fff3e0;
+      color: #F57C00;
     }
 
     #document-display {
       min-height: 200px;
-      max-height: 500px;
+      max-height: 400px;
       overflow-y: auto;
       white-space: pre-wrap;
       word-wrap: break-word;
@@ -154,7 +307,44 @@
       font-style: italic;
     }
 
-    /* スクロールバーのスタイル */
+    .message {
+      padding: 12px 16px;
+      border-radius: 4px;
+      margin-bottom: 15px;
+      font-size: 14px;
+    }
+
+    .message.success {
+      background-color: #e8f5e9;
+      color: #2e7d32;
+      border: 1px solid #a5d6a7;
+    }
+
+    .message.error {
+      background-color: #ffebee;
+      color: #c62828;
+      border: 1px solid #ef9a9a;
+    }
+
+    .message.info {
+      background-color: #e3f2fd;
+      color: #1565c0;
+      border: 1px solid #90caf9;
+    }
+
+    /* ステータスバー */
+    .status-bar {
+      margin-top: 20px;
+      padding: 10px;
+      background-color: #f5f5f5;
+      border-radius: 4px;
+      font-size: 12px;
+      color: #666;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    /* スクロールバー */
     ::-webkit-scrollbar {
       width: 8px;
     }
@@ -176,98 +366,362 @@
 </head>
 <body>
   <div id="app">
-    <h1>📄 ドキュメント管理ツール</h1>
+    <h1>ドキュメント管理ツール v2.0</h1>
 
-    <div id="search-form">
-      <input
-        id="search-input"
-        type="text"
-        placeholder="検索キーワードを入力してください..."
-        autocomplete="off"
-      />
-      <button id="search-button">検索</button>
+    <div class="tabs">
+      <button class="tab-button active" data-tab="search">検索</button>
+      <button class="tab-button" data-tab="register">登録</button>
     </div>
 
-    <div class="container">
-      <div class="section">
-        <h2>検索結果</h2>
-        <div id="results-list">
-          <div class="empty-message">検索結果がここに表示されます</div>
+    <!-- 検索タブ -->
+    <div id="search-tab" class="tab-content active">
+      <div class="search-section">
+        <div class="search-row">
+          <div class="search-field">
+            <label for="search-project">プロジェクト名</label>
+            <select id="search-project">
+              <option value="">全て</option>
+            </select>
+          </div>
+          <div class="search-field">
+            <label for="search-doctype">文書種類</label>
+            <select id="search-doctype">
+              <option value="">全て</option>
+            </select>
+          </div>
+          <div class="search-field" style="flex: 2;">
+            <label for="search-keyword">キーワード</label>
+            <input id="search-keyword" type="text" placeholder="タイトル、パス、説明から検索..." />
+          </div>
+        </div>
+        <div class="button-row">
+          <button id="clear-button" class="btn btn-clear">クリア</button>
+          <button id="search-button" class="btn btn-primary">検索</button>
         </div>
       </div>
 
-      <div class="section">
-        <h2>ドキュメント表示</h2>
-        <div id="document-display">
-          <div class="empty-message">ドキュメントの内容がここに表示されます</div>
+      <div class="results-container">
+        <div class="section">
+          <h2>検索結果 (<span id="result-count">0</span>件)</h2>
+          <div id="results-list">
+            <div class="empty-message">検索結果がここに表示されます</div>
+          </div>
+        </div>
+
+        <div class="section">
+          <h2>ファイルパス</h2>
+          <div id="document-display">
+            <div class="empty-message">ドキュメントを選択するとパスが表示されます</div>
+          </div>
         </div>
       </div>
+    </div>
+
+    <!-- 登録タブ -->
+    <div id="register-tab" class="tab-content">
+      <div id="register-message"></div>
+      <div class="register-form">
+        <div class="form-group">
+          <label for="reg-title">タイトル <span class="required">*</span></label>
+          <input id="reg-title" type="text" placeholder="例: 発注仕様書_プロジェクトA" />
+        </div>
+        <div class="form-group">
+          <label for="reg-filepath">ファイルパス <span class="required">*</span></label>
+          <input id="reg-filepath" type="text" placeholder="例: \\\\fileserver\\docs\\spec.docx" />
+        </div>
+        <div class="form-group">
+          <label for="reg-project">プロジェクト名</label>
+          <input id="reg-project" type="text" placeholder="例: プロジェクトA" list="project-list" />
+          <datalist id="project-list"></datalist>
+        </div>
+        <div class="form-group">
+          <label for="reg-doctype">文書種類</label>
+          <input id="reg-doctype" type="text" placeholder="例: 発注仕様書" list="doctype-list" />
+          <datalist id="doctype-list"></datalist>
+        </div>
+        <div class="form-group">
+          <label for="reg-description">説明</label>
+          <textarea id="reg-description" placeholder="ドキュメントの説明や備考"></textarea>
+        </div>
+        <div class="button-row">
+          <button id="register-clear-button" class="btn btn-clear">クリア</button>
+          <button id="register-button" class="btn btn-secondary">登録</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="status-bar">
+      <span id="db-status">DB: 未接続</span>
+      <span id="last-updated">最終更新: -</span>
     </div>
   </div>
 
   <script>
     // Electron環境でNode.jsモジュールを使用
-    const DocumentSearcher = require('./DocumentSearcher');
-    const FileReader = require('./FileReader');
-    const UIController = require('./UIController');
     const path = require('path');
     const os = require('os');
     const fs = require('fs');
+    const DatabaseManager = require('./DatabaseManager');
+    const LockManager = require('./LockManager');
+    const Logger = require('./Logger');
 
-    // インスタンスを作成
-    const searcher = new DocumentSearcher();
-    const fileReader = new FileReader();
-    const uiController = new UIController(searcher, fileReader);
+    // アプリケーション設定
+    const appDataDir = path.join(os.homedir(), '.document-manager');
+    if (!fs.existsSync(appDataDir)) {
+      fs.mkdirSync(appDataDir, { recursive: true });
+    }
 
-    // サンプルデータを登録
-    function loadSampleDocuments() {
-      // ホームディレクトリにサンプルフォルダを作成
-      const sampleDir = path.join(os.homedir(), 'document-manager-samples');
+    const dbPath = path.join(appDataDir, 'documents.db');
+    const lockPath = path.join(appDataDir, 'app.lock');
+    const logPath = path.join(appDataDir, 'app.log');
 
-      if (!fs.existsSync(sampleDir)) {
-        fs.mkdirSync(sampleDir, { recursive: true });
-      }
+    // インスタンス作成
+    const dbManager = new DatabaseManager(dbPath);
+    const lockManager = new LockManager(lockPath);
+    const logger = new Logger(logPath);
 
-      const sampleDocuments = [
-        {
-          filename: '設計書.txt',
-          content: 'システム設計に関する文書です。\n\nアーキテクチャ概要:\n- フロントエンド: Electron\n- バックエンド: Node.js\n- データベース: なし（ファイルベース）'
-        },
-        {
-          filename: '仕様書.txt',
-          content: '機能仕様とシステム要件を記載。\n\n主な機能:\n1. ドキュメント検索\n2. ドキュメント表示\n3. キーワード検索\n\nシステム要件:\n- Node.js v16以上\n- Electron v27以上'
-        },
-        {
-          filename: '議事録.txt',
-          content: '会議の内容と決定事項。\n\n日時: 2025-11-19\n参加者: 開発チーム全員\n\n議題:\n1. プロジェクトの進捗確認\n2. テスト仕様書のレビュー\n3. 次のマイルストーンの設定'
+    // データベース初期化
+    dbManager.initialize();
+    logger.info('アプリケーション起動');
+    updateDbStatus('接続済み: ' + dbPath);
+
+    // タブ切り替え
+    document.querySelectorAll('.tab-button').forEach(button => {
+      button.addEventListener('click', () => {
+        const tabName = button.dataset.tab;
+
+        document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+        button.classList.add('active');
+        document.getElementById(tabName + '-tab').classList.add('active');
+
+        if (tabName === 'search') {
+          loadFilterOptions();
         }
-      ];
+      });
+    });
 
-      sampleDocuments.forEach(doc => {
-        const filePath = path.join(sampleDir, doc.filename);
-        if (!fs.existsSync(filePath)) {
-          fs.writeFileSync(filePath, doc.content, 'utf8');
-        }
-        searcher.addDocument(doc.filename, filePath, doc.content);
+    // フィルターオプションを読み込み
+    function loadFilterOptions() {
+      const docs = dbManager.search({});
+
+      // プロジェクト名の選択肢
+      const projects = [...new Set(docs.map(d => d.project_name).filter(p => p))];
+      const projectSelect = document.getElementById('search-project');
+      projectSelect.innerHTML = '<option value="">全て</option>';
+      projects.forEach(p => {
+        const option = document.createElement('option');
+        option.value = p;
+        option.textContent = p;
+        projectSelect.appendChild(option);
+      });
+
+      // 文書種類の選択肢
+      const docTypes = [...new Set(docs.map(d => d.document_type).filter(t => t))];
+      const docTypeSelect = document.getElementById('search-doctype');
+      docTypeSelect.innerHTML = '<option value="">全て</option>';
+      docTypes.forEach(t => {
+        const option = document.createElement('option');
+        option.value = t;
+        option.textContent = t;
+        docTypeSelect.appendChild(option);
+      });
+
+      // データリストも更新
+      const projectList = document.getElementById('project-list');
+      projectList.innerHTML = '';
+      projects.forEach(p => {
+        const option = document.createElement('option');
+        option.value = p;
+        projectList.appendChild(option);
+      });
+
+      const docTypeList = document.getElementById('doctype-list');
+      docTypeList.innerHTML = '';
+      docTypes.forEach(t => {
+        const option = document.createElement('option');
+        option.value = t;
+        docTypeList.appendChild(option);
       });
     }
 
-    // アプリケーション初期化
-    loadSampleDocuments();
+    // 検索実行
+    function executeSearch() {
+      const projectName = document.getElementById('search-project').value;
+      const documentType = document.getElementById('search-doctype').value;
+      const keyword = document.getElementById('search-keyword').value;
 
-    // イベントリスナーを設定
-    document.getElementById('search-button').addEventListener('click', () => {
-      uiController.handleSearch();
-    });
+      const options = {};
+      if (projectName) options.projectName = projectName;
+      if (documentType) options.documentType = documentType;
+      if (keyword) options.keyword = keyword;
 
-    document.getElementById('search-input').addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') {
-        uiController.handleSearch();
+      const results = dbManager.search(options);
+      displaySearchResults(results);
+
+      logger.info(`検索実行: プロジェクト=${projectName || '全て'}, 種類=${documentType || '全て'}, キーワード=${keyword || 'なし'}, 結果=${results.length}件`);
+    }
+
+    // 検索結果表示
+    function displaySearchResults(results) {
+      const resultsList = document.getElementById('results-list');
+      const resultCount = document.getElementById('result-count');
+
+      resultCount.textContent = results.length;
+
+      if (results.length === 0) {
+        resultsList.innerHTML = '<div class="empty-message">該当するドキュメントがありません</div>';
+        return;
       }
+
+      resultsList.innerHTML = '';
+      results.forEach(doc => {
+        const item = document.createElement('div');
+        item.className = 'result-item';
+        item.innerHTML = `
+          <div class="document-title">${escapeHtml(doc.title)}</div>
+          <div class="document-path" data-path="${escapeHtml(doc.file_path)}">${escapeHtml(doc.file_path)}</div>
+          <div class="document-tags">
+            ${doc.project_name ? `<span class="tag project">${escapeHtml(doc.project_name)}</span>` : ''}
+            ${doc.document_type ? `<span class="tag type">${escapeHtml(doc.document_type)}</span>` : ''}
+          </div>
+        `;
+
+        // パスクリックでファイルパス詳細表示
+        item.querySelector('.document-path').addEventListener('click', () => {
+          displayDocumentPath(doc);
+        });
+
+        resultsList.appendChild(item);
+      });
+    }
+
+    // ドキュメントパス表示
+    function displayDocumentPath(doc) {
+      const display = document.getElementById('document-display');
+      display.innerHTML = `
+<strong>タイトル:</strong> ${escapeHtml(doc.title)}
+
+<strong>ファイルパス:</strong>
+${escapeHtml(doc.file_path)}
+
+<strong>プロジェクト名:</strong> ${escapeHtml(doc.project_name || '未設定')}
+<strong>文書種類:</strong> ${escapeHtml(doc.document_type || '未設定')}
+
+<strong>説明:</strong>
+${escapeHtml(doc.description || 'なし')}
+
+<strong>登録日時:</strong> ${doc.created_at}
+      `.trim();
+    }
+
+    // ドキュメント登録
+    function registerDocument() {
+      const title = document.getElementById('reg-title').value.trim();
+      const filePath = document.getElementById('reg-filepath').value.trim();
+      const projectName = document.getElementById('reg-project').value.trim();
+      const documentType = document.getElementById('reg-doctype').value.trim();
+      const description = document.getElementById('reg-description').value.trim();
+
+      // バリデーション
+      if (!title || !filePath) {
+        showMessage('register-message', 'タイトルとファイルパスは必須です', 'error');
+        return;
+      }
+
+      // ロック取得
+      if (!lockManager.acquireLock()) {
+        showMessage('register-message', '他のユーザーが操作中です。しばらくお待ちください。', 'error');
+        logger.warn('ロック取得失敗: 他のユーザーが操作中');
+        return;
+      }
+
+      try {
+        const id = dbManager.addDocument({
+          title,
+          filePath,
+          projectName: projectName || null,
+          documentType: documentType || null,
+          description: description || null
+        });
+
+        showMessage('register-message', `ドキュメントを登録しました (ID: ${id})`, 'success');
+        logger.info(`ドキュメント登録: ID=${id}, タイトル=${title}`);
+
+        // フォームクリア
+        clearRegisterForm();
+        updateLastUpdated();
+      } catch (error) {
+        showMessage('register-message', '登録に失敗しました: ' + error.message, 'error');
+        logger.error('ドキュメント登録エラー: ' + error.message);
+      } finally {
+        lockManager.releaseLock();
+      }
+    }
+
+    // ユーティリティ関数
+    function escapeHtml(str) {
+      if (!str) return '';
+      return str
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function showMessage(elementId, message, type) {
+      const el = document.getElementById(elementId);
+      el.innerHTML = `<div class="message ${type}">${escapeHtml(message)}</div>`;
+      setTimeout(() => { el.innerHTML = ''; }, 5000);
+    }
+
+    function clearSearchForm() {
+      document.getElementById('search-project').value = '';
+      document.getElementById('search-doctype').value = '';
+      document.getElementById('search-keyword').value = '';
+    }
+
+    function clearRegisterForm() {
+      document.getElementById('reg-title').value = '';
+      document.getElementById('reg-filepath').value = '';
+      document.getElementById('reg-project').value = '';
+      document.getElementById('reg-doctype').value = '';
+      document.getElementById('reg-description').value = '';
+    }
+
+    function updateDbStatus(status) {
+      document.getElementById('db-status').textContent = 'DB: ' + status;
+    }
+
+    function updateLastUpdated() {
+      document.getElementById('last-updated').textContent = '最終更新: ' + new Date().toLocaleString('ja-JP');
+    }
+
+    // イベントリスナー
+    document.getElementById('search-button').addEventListener('click', executeSearch);
+    document.getElementById('clear-button').addEventListener('click', () => {
+      clearSearchForm();
+      executeSearch();
+    });
+    document.getElementById('search-keyword').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') executeSearch();
     });
 
-    // 初期状態で全ドキュメントを表示
-    uiController.handleSearch();
+    document.getElementById('register-button').addEventListener('click', registerDocument);
+    document.getElementById('register-clear-button').addEventListener('click', clearRegisterForm);
+
+    // 初期化
+    loadFilterOptions();
+    executeSearch();
+
+    // ウィンドウ終了時
+    window.addEventListener('beforeunload', () => {
+      lockManager.releaseLock();
+      dbManager.close();
+      logger.info('アプリケーション終了');
+    });
   </script>
 </body>
 </html>
