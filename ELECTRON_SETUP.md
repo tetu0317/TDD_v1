@@ -26,9 +26,11 @@ npm install
 ```
 
 このコマンドで以下がインストールされます：
-- Electron v27.0.0
+- **Electron v27.0.0** （約120MB - 初回は時間がかかります）
 - Jest v29.7.0（テストフレームワーク）
 - jsdom（DOM環境シミュレーション）
+
+**重要**: Electronのダウンロードには数分かかる場合があります。エラーが出た場合は、「トラブルシューティング」セクションを参照してください。
 
 ### 3. アプリケーションの起動
 
@@ -36,8 +38,37 @@ npm install
 npm start
 ```
 
+**注意**:
+- 初回起動前に必ず`npm install`を実行してください
+- Electronのインストールに失敗した場合は、「テストのみ実行」セクションを参照してください
+
 ウィンドウサイズ: 1200x800px
 タイトル: ドキュメント管理ツール v1.0
+
+## テストのみ実行（Electronなし）
+
+Electronのインストールに失敗した場合でも、**全てのテストは実行可能**です：
+
+```bash
+# Electronをスキップしてインストール
+set ELECTRON_SKIP_BINARY_DOWNLOAD=1
+npm install
+
+# 全テスト実行（28テスト）
+npm test
+
+# カバレッジ付きテスト
+npm run test:coverage
+
+# 単体テストのみ
+npm run test:unit
+```
+
+**確認事項**:
+- ✅ 全12テストスイート、28テストが実行される
+- ✅ DocumentSearcher、FileReader、UIControllerの全機能をテスト
+- ✅ カバレッジレポートが生成される
+- ❌ GUIアプリケーションは起動できない（Electron必須）
 
 ## 初回起動時の自動処理
 
@@ -153,11 +184,107 @@ TDD_v1/
 
 ## トラブルシューティング
 
-### Electronのインストールに失敗する
+### 'electron' is not recognized as an internal or external command (Windows)
+
+**症状**: `npm start`実行時に以下のエラーが表示される
+```
+'electron' is not recognized as an internal or external command,
+operable program or batch file
+```
+
+**原因**: Electronがインストールされていないか、パスが通っていない
+
+**対処法（方法1: PowerShellを使用）**:
+```powershell
+# 1. node_modulesを削除
+Remove-Item -Recurse -Force node_modules
+
+# 2. package-lock.jsonを削除
+Remove-Item -Force package-lock.json
+
+# 3. 再インストール
+npm install
+
+# 4. アプリケーションを起動
+npm start
+```
+
+**対処法（方法2: コマンドプロンプトを使用）**:
+```cmd
+# 1. node_modulesを削除
+rmdir /s /q node_modules
+
+# 2. package-lock.jsonを削除
+del package-lock.json
+
+# 3. 再インストール
+npm install
+
+# 4. アプリケーションを起動
+npm start
+```
+
+**対処法（方法3: 手動削除）**:
+```bash
+# 1. エクスプローラーで node_modules フォルダを削除
+#    - プロジェクトフォルダを開く
+#    - node_modules フォルダを右クリック → 削除
+#    - ごみ箱を空にする
+
+# 2. package-lock.json を削除（あれば）
+
+# 3. 再インストール
+npm install
+
+# 4. アプリケーションを起動
+npm start
+```
+
+**対処法（方法4: node_modulesを削除せずに試す）**:
+```bash
+# 1. npmキャッシュをクリア
+npm cache clean --force
+
+# 2. Electronを明示的にインストール
+npm install electron --save-dev
+
+# 3. アプリケーションを起動
+npm start
+```
+
+**それでも解決しない場合**:
+```bash
+# npxを使って直接実行（package.jsonで既に設定済み）
+npm start
+
+# または
+npx electron .
+```
+
+### Electronのインストールに失敗する（エラーコード: 2551など）
 
 **症状**: `npm install`時にElectronのダウンロードエラー
+```
+npm error code 2551
+npm error path ...electron
+npm error HTTPError: Response code 403 (Forbidden)
+```
 
-**対処法**:
+**原因**: Electronのバイナリダウンロードが制限されている環境
+
+**対処法（方法1: Electronダウンロードをスキップ）**:
+```bash
+# 環境変数を設定してElectronのダウンロードをスキップ
+set ELECTRON_SKIP_BINARY_DOWNLOAD=1
+
+# インストール実行
+npm install
+
+# テストは実行可能
+npm test
+```
+
+**対処法（方法2: npmキャッシュをクリア）**:
 ```bash
 # キャッシュをクリア
 npm cache clean --force
@@ -165,6 +292,17 @@ npm cache clean --force
 # 再インストール
 npm install
 ```
+
+**対処法（方法3: Electronなしでテストのみ実行）**:
+```bash
+# package.jsonでElectronをoptionalDependenciesに設定済み
+# Electronなしでもテストは実行可能
+
+npm install
+npm test
+```
+
+**注意**: Electronのダウンロードに失敗しても、**テスト実行には影響ありません**。GUI版の実行が必要な場合のみ、Electronのインストールが必要です。
 
 ### テストが失敗する
 

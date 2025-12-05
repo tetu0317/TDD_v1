@@ -4,7 +4,8 @@
   "description": "ドキュメント管理ツール - TDD実装プロジェクト",
   "main": "src/main.js",
   "scripts": {
-    "start": "electron .",
+    "start": "npx electron .",
+    "electron": "electron .",
     "test": "jest",
     "test:coverage": "jest --coverage",
     "test:watch": "jest --watch",

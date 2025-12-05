@@ -76,6 +76,16 @@ TDD_v1/
 npm install
 ```
 
+**注意**: Electronのインストールに失敗する場合（エラーコード2551など）は、以下を実行：
+
+```bash
+# Electronをスキップしてインストール
+set ELECTRON_SKIP_BINARY_DOWNLOAD=1
+npm install
+```
+
+テスト実行には影響ありません。詳細は `ELECTRON_SETUP.md` を参照してください。
+
 ## テスト実行
 
 ```bash
@@ -104,7 +114,12 @@ npm run test:watch
 npm start
 ```
 
-※ Electronのインストールが必要です。環境によってはネットワークエラーが発生する場合があります。
+**前提条件**: Electronのインストールが必要です。
+
+**Electronのインストールに失敗した場合**:
+- テストのみ実行可能です（`npm test`）
+- GUIアプリケーションは起動できません
+- 詳細は `ELECTRON_SETUP.md` の「テストのみ実行」セクションを参照
 
 ## テスト結果
 
